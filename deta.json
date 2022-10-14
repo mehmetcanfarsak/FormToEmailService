@@ -24,7 +24,7 @@
     {
       "key": "SENDER_EMAIL_ADDRESS",
       "description": "This email address will be used for sending responses of your forms",
-      "value": "smtp.gmail.com",
+      "value": "user@example.com",
       "required": true
     },
     {
