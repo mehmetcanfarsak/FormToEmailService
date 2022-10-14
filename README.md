@@ -2,6 +2,8 @@
 
 # Simple Form To Email Service 📨
 
+[![Deploy](https://button.deta.dev/1/svg)](https://go.deta.dev/deploy?repo=https://github.com/mehmetcanfarsak/FormToEmailService)
+
 > **Reliable** form service. Everytime your form is submitted, you will receive email.
 >
 > **Opensource**, working and free alternative of MailThis.to
