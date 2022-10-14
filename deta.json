@@ -1,0 +1,49 @@
+{
+  "name": "Form To Email Service",
+  "description": "Simple and beautiful dashboard to keep your files safe. Note: if you will use your Gmail account you must get your app password from: https://support.google.com/mail/?p=InvalidSecondFactor",
+  "runtime": "python3.9",
+  "env": [
+    {
+      "key": "ADMIN_USERNAME",
+      "description": "Username will be used for creating new aliases.",
+      "value": "7207a43b",
+      "required": true
+    },
+    {
+      "key": "ADMIN_PASSWORD",
+      "description": "Password will be used for creating new aliases.",
+      "value": "7207a43b",
+      "required": true
+    },
+    {
+      "key": "PRIVATE_SIMPLE_CAPTCHA_API_LINK",
+      "description": "PrivateSimpleCaptchaApi Service Link. You can leave default value.",
+      "value": "https://PrivateSimpleCaptchaApi.deta.dev",
+      "required": true
+    },
+    {
+      "key": "SENDER_EMAIL_ADDRESS",
+      "description": "This email address will be used for sending responses of your forms",
+      "value": "smtp.gmail.com",
+      "required": true
+    },
+    {
+      "key": "SENDER_SMTP_PORT",
+      "description": "This is the port of your smtp server usually it is 587 (Like email providers such as Gmail)",
+      "value": "587",
+      "required": true
+    },
+    {
+      "key": "SENDER_SERVER_ADDRESS",
+      "description": "Server address of your email provider",
+      "value": "smtp.gmail.com",
+      "required": true
+    },
+    {
+      "key": "SENDER_MAIL_PASSWORD",
+      "description": "Email password or in gmail app password (you can get your app password from https://support.google.com/mail/?p=InvalidSecondFactor)",
+      "value": "YOUR PASSWORD",
+      "required": true
+    }
+  ]
+}

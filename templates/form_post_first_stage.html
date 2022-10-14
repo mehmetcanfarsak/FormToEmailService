@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Form</title>
+    <link rel="stylesheet" type="text/css" href="static/style.css">
+    <script src="static/form_post_first_stage.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
+    <style type="text/css">
+        #loader {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.75) url(static/spinner.gif) no-repeat center center;
+            z-index: 10000;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="wrapper">
+
+    <div class="form">
+        <div class="input-container ic2">
+            <img class="captcha-image" alt="captcha image"
+                 src="show-captcha-image/{{ filled_form_key }}.png"/>
+        </div>
+        <input type="hidden" name="filled_form_key" value="{{ filled_form_key }}" id="filled_form_key">
+        <input type="hidden" name="alias" value="{{ alias }}" id="alias">
+        <div class="input-container ic2">
+            <input id="captcha" class="input" type="text" placeholder="" onmouseup=""/>
+            <div class="cut cut-short"></div>
+            <label for="captcha" class="placeholder">Captcha</label>
+        </div>
+        <button id="submit" class="submit">Submit</button>
+    </div>
+
+
+</div>
+<div id="loader"></div>
+
+<script src="http://code.jquery.com/jquery.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script>
+
+</script>
+
+
+</body>
+
+</html>

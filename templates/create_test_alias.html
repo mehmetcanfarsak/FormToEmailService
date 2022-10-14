@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Test Form</title>
+    <link rel="stylesheet" type="text/css" href="static/style.css">
+
+</head>
+
+<body>
+<div class="form">
+    <form action="/create-alias-and-show-test-form" method="post">
+        <div class="title">Create Your Alias</div>
+        <div class="subtitle">After creating alias, you will be redirected to a test form.</div>
+
+        <div class="input-container ic1">
+            <input id="Alias" name="alias" class="input" type="text" required placeholder=" "/>
+            <div class="cut"></div>
+            <label for="Alias" class="placeholder">Alias</label>
+        </div>
+        <div class="input-container ic2">
+            <input id="emailId" name="email" class="input" type="text" placeholder="  "/>
+            <div class="cut"></div>
+            <label for="emailId" class="placeholder">Email</label>
+        </div>
+
+        <button id="submit" type="submit" class="submit">Submit</button>
+    </form>
+</div>
+</body>
+
+</html>

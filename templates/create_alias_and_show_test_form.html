@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Test Form</title>
+    <link rel="stylesheet" type="text/css" href="static/style.css">
+
+</head>
+
+<body>
+<div class="form">
+    <form action="/{{ alias }}" method="post">
+        <div class="title">Test Form of Alias {{ alias }}</div>
+        <div class="subtitle">Example Contact Us Form!</div>
+        <div class="input-container ic1">
+            <input id="Name" name="name" class="input" type="text" required placeholder=" "/>
+            <div class="cut"></div>
+            <label for="Name" class="placeholder">Name</label>
+        </div>
+        <div class="input-container ic2">
+            <input id="message" name="message" class="input" type="text" placeholder="  "/>
+            <div class="cut"></div>
+            <label for="message" class="placeholder">Message</label>
+        </div>
+
+        <button id="submit" type="submit" class="submit">Submit</button>
+    </form>
+</div>
+</body>
+
+</html>
