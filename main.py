@@ -20,19 +20,10 @@ from config import get_env_variable
 filled_forms_db = Base("FormToEmailServiceFilledForms")
 alias_db = Base("FormToEmailServiceAliases")
 
-ADMIN_USERNAME = get_env_variable("ADMIN_USERNAME", "demo")
-ADMIN_PASSWORD = get_env_variable("ADMIN_PASSWORD", "demo")
-PRIVATE_SIMPLE_CAPTCHA_API_LINK = get_env_variable("PRIVATE_SIMPLE_CAPTCHA_API_LINK",
-                                                   "https://PrivateSimpleCaptchaApi.deta.dev")
-SENDER_EMAIL_ADDRESS = get_env_variable("SENDER_EMAIL_ADDRESS")
-SENDER_SMTP_PORT = get_env_variable("SENDER_SMTP_PORT")
-SENDER_SERVER_ADDRESS = get_env_variable("SENDER_SERVER_ADDRESS")
-SENDER_MAIL_PASSWORD = get_env_variable("SENDER_MAIL_PASSWORD")
-
 from uuid import uuid4
 
 demo_credentials_part = ""
-if (ADMIN_USERNAME == "demo"):
+if (get_env_variable("ADMIN_USERNAME", "demo") == "demo"):
     demo_credentials_part = """
 ### Demo Credentials    
 * **Username:** demo
@@ -83,12 +74,12 @@ class AdminUser(BaseModel):
 
 def get_admin_user(credentials: HTTPBasicCredentials = Depends(security)):
     current_username_bytes = credentials.username.encode("utf8")
-    correct_username_bytes = ADMIN_USERNAME.encode("utf8")
+    correct_username_bytes = get_env_variable("ADMIN_USERNAME", "demo").encode("utf8")
     is_correct_username = secrets.compare_digest(
         current_username_bytes, correct_username_bytes
     )
     current_password_bytes = credentials.password.encode("utf8")
-    correct_password_bytes = ADMIN_PASSWORD.encode("utf8")
+    correct_password_bytes = get_env_variable("ADMIN_PASSWORD", "demo").encode("utf8")
     is_correct_password = secrets.compare_digest(
         current_password_bytes, correct_password_bytes
     )
@@ -163,7 +154,9 @@ def show_captcha_image(filled_form_key: str):
     if (not filled_form):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Captcha Not Found")
     response = requests.get(
-        PRIVATE_SIMPLE_CAPTCHA_API_LINK + "/get-captcha-image/" + filled_form['captcha_id'] + ".png", stream=True)
+        get_env_variable("PRIVATE_SIMPLE_CAPTCHA_API_LINK",
+                         "https://PrivateSimpleCaptchaApi.deta.dev") + "/get-captcha-image/" + filled_form[
+            'captcha_id'] + ".png", stream=True)
     return StreamingResponse(response.raw, media_type="")
 
 
@@ -194,8 +187,8 @@ def form_post_captcha_submit(alias: str, filled_form_key: str = Body(), text_of_
     Have a good day!
     """
     # The mail addresses and password
-    sender_address = SENDER_EMAIL_ADDRESS
-    sender_pass = SENDER_MAIL_PASSWORD
+    sender_address = get_env_variable("SENDER_EMAIL_ADDRESS")
+    sender_pass = get_env_variable("SENDER_MAIL_PASSWORD")
     receiver_address = alias_email
     # Setup the MIME
     message = MIMEMultipart()
@@ -205,7 +198,8 @@ def form_post_captcha_submit(alias: str, filled_form_key: str = Body(), text_of_
     # The body and the attachments for the mail
     message.attach(MIMEText(mail_content, 'html'))
     # Create SMTP session for sending the mail
-    session = smtplib.SMTP(SENDER_SERVER_ADDRESS, int(SENDER_SMTP_PORT))  # use gmail with port
+    session = smtplib.SMTP(get_env_variable("SENDER_SERVER_ADDRESS"),
+                           int(get_env_variable("SENDER_EMAIL_ADDRESS")))  # use gmail with port
     session.starttls()  # enable security
     session.login(sender_address, sender_pass)  # login with mail_id and password
     text = message.as_string()
@@ -226,7 +220,8 @@ async def form_post_first_stage(alias: str, request: Request, test_name_variable
     if (not alias_db.get(alias)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Alias Not Found!")
     filled_form_key = str(uuid4())
-    captcha_response = requests.get(PRIVATE_SIMPLE_CAPTCHA_API_LINK + "/create-random-captcha").json()
+    captcha_response = requests.get(get_env_variable("PRIVATE_SIMPLE_CAPTCHA_API_LINK",
+                                                     "https://PrivateSimpleCaptchaApi.deta.dev") + "/create-random-captcha").json()
     filled_form = FilledFormModel(
         key=filled_form_key,
         captcha_id=captcha_response['captcha_id'],
