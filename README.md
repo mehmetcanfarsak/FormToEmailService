@@ -27,7 +27,7 @@
 * **Username:** demo
 * **Password:** demo
 
-### [📝Test Now With Creating Your Alias](create-test-alias)
+### [📝Test Now With Creating Your Alias](https://FormToEmailService.deta.dev/create-test-alias)
 
 ## Usage
 
