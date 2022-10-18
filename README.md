@@ -12,6 +12,7 @@
 
 - **Built in spam protection**  with built in captcha (provided
   by [PrivateSimpleCaptchaApi](https://github.com/mehmetcanfarsak/PrivateSimpleCaptchaApi))
+- Fast form submitting in milliseconds (Thanks to [DetaEventQueue](https://github.com/mehmetcanfarsak/DetaEventQueue))
 - Create alias to protect your email from bots.
 - Simple usage and quick setup
 - Customize your forms to your liking
