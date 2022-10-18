@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Depends, status, HTTPException, Body, Form
+from fastapi import FastAPI, Request, Depends, status, HTTPException, Body, Form, Query
 from fastapi.staticfiles import StaticFiles
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.templating import Jinja2Templates
@@ -9,7 +9,7 @@ import requests, secrets
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
+from os import getenv
 from deta import Base
 
 from dotenv import load_dotenv
@@ -118,9 +118,48 @@ class FilledFormModel(BaseModel):
     form_inputs: dict
 
 
+def send_email(email_subject: str, email_body: str, receiver_email: EmailStr):
+    sender_address = get_env_variable("SENDER_EMAIL_ADDRESS")
+    sender_pass = get_env_variable("SENDER_MAIL_PASSWORD")
+    receiver_address = receiver_email
+    # Setup the MIME
+    message = MIMEMultipart()
+    message['From'] = sender_address
+    message['To'] = receiver_address
+    message['Subject'] = email_subject  # The subject line
+    # The body and the attachments for the mail
+    message.attach(MIMEText(email_body, 'html'))
+    # Create SMTP session for sending the mail
+    session = smtplib.SMTP(get_env_variable("SENDER_SERVER_ADDRESS"),
+                           int(get_env_variable("SENDER_SMTP_PORT")))  # use gmail with port
+    session.starttls()  # enable security
+    session.login(sender_address, sender_pass)  # login with mail_id and password
+    text = message.as_string()
+    session.sendmail(sender_address, receiver_address, text)
+    session.quit()
+
+    return
+
+
 @app.get("/", include_in_schema=False, response_class=RedirectResponse)
 def root():
     return RedirectResponse("/docs")
+
+
+@app.get("/test-sending-email",
+         description="If you encounter any error, you just check your email settings with this endpoint.",
+         tags=["Check if Your Email Settings are Okay"])
+def test_sending_email(receiver_email: EmailStr = Query("user@example.com"),
+                       credentials: HTTPBasicCredentials = Depends(get_admin_user)):
+    import traceback
+    try:
+        send_email(email_subject="Test from FormToEmailService",
+                   email_body="This is a test mail. If you see this email in your inbox, your email settings are properly installed.",
+                   receiver_email=receiver_email)
+    except:
+        return "Got Error. Error Details: " + str(traceback.format_exc())
+
+    return "Email Sent Successfully"
 
 
 @app.post("/create-alias", tags=['Create Alias'], response_model=CreateAliasResponseModel)
@@ -175,37 +214,42 @@ def form_post_captcha_submit(alias: str, filled_form_key: str = Body(), text_of_
     alias_email = alias_db.get(filled_form['alias'])['email']
     filled_form['is_email_sent'] = True
     filled_forms_db.put(filled_form)
+
+    requests.post("https://detaeventqueue.deta.dev/receive-event?password=demo", json={
+        "url_to_send_request": f"https://{getenv('DETA_PATH', 'demo')}/form-send-email-job?filled_form_key={filled_form_key}&ADMIN_USERNAME={get_env_variable('ADMIN_USERNAME', 'demo')}&ADMIN_PASSWORD={get_env_variable('ADMIN_PASSWORD', 'demo')}",
+        "call_url_after": 0,
+        "max_try_count": 3,
+        "timeout_for_request": 6,
+        "event_tags": []
+    })
+
+    return CaptchaSubmitResponseModel(is_submit_successful=True)
+
+
+@app.get('/form-send-email-job', include_in_schema=False)
+def form_send_email_job(filled_form_key: str, ADMIN_USERNAME: str, ADMIN_PASSWORD: str):
+    if (ADMIN_USERNAME != get_env_variable("ADMIN_USERNAME", "demo")):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Username or password is wrong!")
+    if (ADMIN_PASSWORD != get_env_variable("ADMIN_PASSWORD", "demo")):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Username or password is wrong!")
+    filled_form = filled_forms_db.get(filled_form_key)
+    if (filled_form['is_email_sent'] == True):
+        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="Submitted Before!")
+    alias_email = alias_db.get(filled_form['alias'])['email']
     mail_string_of_form_details = ""
     for form_input_key in filled_form['form_inputs']:
         mail_string_of_form_details += "<b>" + str(form_input_key) + "</b> : " + filled_form['form_inputs'][
             form_input_key] + " <br> "
     mail_content = f"""Hello, <br>
     New Form Submitted. Here is details of the form.<br><br>
-    
+
     {mail_string_of_form_details}
     <br><br><br>
     Have a good day!
     """
-    # The mail addresses and password
-    sender_address = get_env_variable("SENDER_EMAIL_ADDRESS")
-    sender_pass = get_env_variable("SENDER_MAIL_PASSWORD")
-    receiver_address = alias_email
-    # Setup the MIME
-    message = MIMEMultipart()
-    message['From'] = sender_address
-    message['To'] = receiver_address
-    message['Subject'] = 'A New Form is submitted to your alias: ' + str(filled_form['alias'])  # The subject line
-    # The body and the attachments for the mail
-    message.attach(MIMEText(mail_content, 'html'))
-    # Create SMTP session for sending the mail
-    session = smtplib.SMTP(get_env_variable("SENDER_SERVER_ADDRESS"),
-                           int(get_env_variable("SENDER_EMAIL_ADDRESS")))  # use gmail with port
-    session.starttls()  # enable security
-    session.login(sender_address, sender_pass)  # login with mail_id and password
-    text = message.as_string()
-    session.sendmail(sender_address, receiver_address, text)
-    session.quit()
-    return CaptchaSubmitResponseModel(is_submit_successful=True)
+    subject = 'A New Form is submitted to your alias: ' + str(filled_form['alias'])
+    send_email(email_subject=subject, email_body=mail_content, receiver_email=alias_email)
+    return "OK"
 
 
 @app.get('/favicon.ico', include_in_schema=False)
