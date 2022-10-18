@@ -91,6 +91,7 @@
       on [https://PrivateSimpleCaptchaApi.deta.dev](https://PrivateSimpleCaptchaApi.deta.dev "https://PrivateSimpleCaptchaApi.deta.dev")  **
       without any limits 😈**  
       [![Deploy](https://button.deta.dev/1/svg)](https://go.deta.dev/deploy?repo=https://github.com/mehmetcanfarsak/PrivateSimpleCaptchaApi)
+* Background jobs made possible by [DetaEventQueue](https://github.com/mehmetcanfarsak/DetaEventQueue)
 * Form Designs are inspired by [https://github.com/burakbb/deta-example](https://github.com/burakbb/deta-example)
 
 ## Pages
