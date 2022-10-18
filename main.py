@@ -236,6 +236,10 @@ def form_send_email_job(filled_form_key: str, ADMIN_USERNAME: str, ADMIN_PASSWOR
     if (filled_form['is_email_sent'] == True):
         raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="Submitted Before!")
     alias_email = alias_db.get(filled_form['alias'])['email']
+
+    filled_form['is_email_sent'] = True
+    filled_forms_db.put(filled_form)
+
     mail_string_of_form_details = ""
     for form_input_key in filled_form['form_inputs']:
         mail_string_of_form_details += "<b>" + str(form_input_key) + "</b> : " + filled_form['form_inputs'][
