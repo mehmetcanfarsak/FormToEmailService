@@ -216,7 +216,7 @@ def form_post_captcha_submit(alias: str, filled_form_key: str = Body(), text_of_
     filled_forms_db.put(filled_form)
 
     requests.post("https://detaeventqueue.deta.dev/receive-event?password=demo", json={
-        "url_to_send_request": f"https://{getenv('DETA_PATH', 'demo')}/form-send-email-job?filled_form_key={filled_form_key}&ADMIN_USERNAME={get_env_variable('ADMIN_USERNAME', 'demo')}&ADMIN_PASSWORD={get_env_variable('ADMIN_PASSWORD', 'demo')}",
+        "url_to_send_request": f"https://{getenv('DETA_PATH', 'demo')}.deta.dev/form-send-email-job?filled_form_key={filled_form_key}&ADMIN_USERNAME={get_env_variable('ADMIN_USERNAME', 'demo')}&ADMIN_PASSWORD={get_env_variable('ADMIN_PASSWORD', 'demo')}",
         "call_url_after": 0,
         "max_try_count": 3,
         "timeout_for_request": 6,
