@@ -211,7 +211,7 @@ def form_post_captcha_submit(alias: str, filled_form_key: str = Body(), text_of_
         raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="Submitted Before!")
     if (filled_form['text_of_captcha'] != text_of_captcha):
         return CaptchaSubmitResponseModel(is_submit_successful=False)
-    alias_email = alias_db.get(filled_form['alias'])['email']
+
 
 
 
