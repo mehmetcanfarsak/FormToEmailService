@@ -212,8 +212,8 @@ def form_post_captcha_submit(alias: str, filled_form_key: str = Body(), text_of_
     if (filled_form['text_of_captcha'] != text_of_captcha):
         return CaptchaSubmitResponseModel(is_submit_successful=False)
     alias_email = alias_db.get(filled_form['alias'])['email']
-    filled_form['is_email_sent'] = True
-    filled_forms_db.put(filled_form)
+
+
 
     requests.post("https://detaeventqueue.deta.dev/receive-event?password=demo", json={
         "url_to_send_request": f"https://{getenv('DETA_PATH', 'demo')}.deta.dev/form-send-email-job?filled_form_key={filled_form_key}&ADMIN_USERNAME={get_env_variable('ADMIN_USERNAME', 'demo')}&ADMIN_PASSWORD={get_env_variable('ADMIN_PASSWORD', 'demo')}",
