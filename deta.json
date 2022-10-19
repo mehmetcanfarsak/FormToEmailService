@@ -22,6 +22,18 @@
       "required": true
     },
     {
+      "key": "DETA_EVENT_QUEUE_LINK",
+      "description": "DetaEventQueue Service Link. You can leave default value.",
+      "value": "https://DetaEventQueue.deta.dev",
+      "required": true
+    },
+    {
+      "key": "DETA_EVENT_QUEUE_PASSWORD",
+      "description": "DetaEventQueue password. You can leave default value.",
+      "value": "demo",
+      "required": true
+    },
+    {
       "key": "SENDER_EMAIL_ADDRESS",
       "description": "This email address will be used for sending responses of your forms",
       "value": "user@example.com",

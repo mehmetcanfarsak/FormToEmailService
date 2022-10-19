@@ -11,6 +11,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from os import getenv
 from deta import Base
+from html import escape
 
 from dotenv import load_dotenv
 
@@ -212,11 +213,10 @@ def form_post_captcha_submit(alias: str, filled_form_key: str = Body(), text_of_
     if (filled_form['text_of_captcha'] != text_of_captcha):
         return CaptchaSubmitResponseModel(is_submit_successful=False)
 
-
-
-
-    requests.post("https://detaeventqueue.deta.dev/receive-event?password=demo", json={
-        "url_to_send_request": f"https://{getenv('DETA_PATH', 'demo')}.deta.dev/form-send-email-job?filled_form_key={filled_form_key}&ADMIN_USERNAME={get_env_variable('ADMIN_USERNAME', 'demo')}&ADMIN_PASSWORD={get_env_variable('ADMIN_PASSWORD', 'demo')}",
+    requests.post(get_env_variable("DETA_EVENT_QUEUE_LINK",
+                                   "https://DetaEventQueue.deta.dev") + "/receive-event?password=" + get_env_variable(
+        "DETA_EVENT_QUEUE_PASSWORD", "demo"), json={
+        "url_to_send_request": f"https://{getenv('DETA_PATH')}.deta.dev/form-send-email-job?filled_form_key={filled_form_key}&ADMIN_USERNAME={get_env_variable('ADMIN_USERNAME', 'demo')}&ADMIN_PASSWORD={get_env_variable('ADMIN_PASSWORD', 'demo')}",
         "call_url_after": 0,
         "max_try_count": 3,
         "timeout_for_request": 6,
@@ -242,8 +242,9 @@ def form_send_email_job(filled_form_key: str, ADMIN_USERNAME: str, ADMIN_PASSWOR
 
     mail_string_of_form_details = ""
     for form_input_key in filled_form['form_inputs']:
-        mail_string_of_form_details += "<b>" + str(form_input_key) + "</b> : " + filled_form['form_inputs'][
-            form_input_key] + " <br> "
+        mail_string_of_form_details += "<b>" + escape(str(form_input_key)) + "</b> : " + escape(
+            str(filled_form['form_inputs'][
+                    form_input_key])) + " <br> "
     mail_content = f"""Hello, <br>
     New Form Submitted. Here is details of the form.<br><br>
 
