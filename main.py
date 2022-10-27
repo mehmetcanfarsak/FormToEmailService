@@ -61,6 +61,9 @@ You can deploy your own instance of FormToEmailService using the button below. Y
     * If user wrote wrong text of captcha captcha, error is prompted.
 * If  user wrote right text of captcha captcha, success animation is showed and  email is sent to email of the ailas.
  
+ ### 💻 Github Page: 
+
+[https://github.com/mehmetcanfarsak/FormToEmailService](https://github.com/mehmetcanfarsak/FormToEmailService "https://github.com/mehmetcanfarsak/FormToEmailService")
 """
 app = FastAPI(title="📭 Form To Email Service", description=description_of_fastapi,
               contact={"url": "https://github.com/mehmetcanfarsak", "Name": "Mehmet Can Farsak"})
@@ -239,9 +242,12 @@ def form_send_email_job(filled_form_key: str, ADMIN_USERNAME: str, ADMIN_PASSWOR
 
     filled_form['is_email_sent'] = True
     filled_forms_db.put(filled_form)
+    subject = 'A New Form is submitted to your alias: ' + str(filled_form['alias'])
 
     mail_string_of_form_details = ""
     for form_input_key in filled_form['form_inputs']:
+        if(str(form_input_key).lower().strip()=="subject"):
+            subject=escape(str(filled_form['form_inputs'][form_input_key]))+" | "+subject
         mail_string_of_form_details += "<b>" + escape(str(form_input_key)) + "</b> : " + escape(
             str(filled_form['form_inputs'][
                     form_input_key])) + " <br> "
@@ -252,7 +258,7 @@ def form_send_email_job(filled_form_key: str, ADMIN_USERNAME: str, ADMIN_PASSWOR
     <br><br><br>
     Have a good day!
     """
-    subject = 'A New Form is submitted to your alias: ' + str(filled_form['alias'])
+
     send_email(email_subject=subject, email_body=mail_content, receiver_email=alias_email)
     return "OK"
 

@@ -18,6 +18,7 @@
 - Customize your forms to your liking
 - Free and Secure [(Click to deploy **your
   instance**)](https://go.deta.dev/deploy?repo=https://github.com/mehmetcanfarsak/FormToEmailService)
+- Customize Subject of email (just add ``an input with name "subject" `` to your form)
 - **Saves your time** (Don't hassle with servers)
 
 [![Demo Image](static/img.png)](https://FormToEmailService.deta.dev)
@@ -55,6 +56,7 @@
         method="POST">
         <input type="email" name="email" placeholder="Your email">
         <input type="text" name="name" placeholder="Your name"> 
+        <input type="text" name="subject" placeholder="Test subject of email">
         <textarea name="message" placeholder="Enter your message here"></textarea>
         <input type="submit" value="Send"> 
     </form> 
@@ -65,6 +67,7 @@
     $.post('https://FormToEmailService.deta.dev/YourAlias', {
       email: 'foo@bar.co',
       name: 'John Doe',
+      subject: 'Test subject of email',
       message: 'Test Message'
     }).then(function () {
       alert('Yuppie Form Submitted Successfully!');
